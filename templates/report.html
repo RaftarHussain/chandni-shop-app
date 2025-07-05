@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ view_type|capitalize }} Summary</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="header centered-header">
+    <a href="/">
+    <img src="/static/logo.png" alt="Chandni Collection Logo">
+</a>
+
+    <h1>Chandni Collection</h1>
+</div>
+
+<div class="container">
+    <h1>{{ view_type|capitalize }} Report</h1>
+    <h4>{{ start_date }} to {{ end_date }}</h4>
+
+    <form method="POST">
+        <label>Select Report Type:</label>
+        <select name="view_type">
+            <option value="week" {% if view_type == 'week' %}selected{% endif %}>This Week</option>
+            <option value="month" {% if view_type == 'month' %}selected{% endif %}>This Month</option>
+        </select>
+        <button type="submit">View</button>
+    </form>
+
+    <div class="summary-box">
+        <p><strong>Total Cash Sales:</strong> ₹{{ cash_total }}</p>
+        <p><strong>Total UPI Sales:</strong> ₹{{ upi_total }}</p>
+        <p><strong>Total Expenses:</strong> ₹{{ expense_total }}</p>
+        <hr>
+        <p><strong>Remaining Profit:</strong> ₹{{ remaining }}</p>
+    </div>
+
+    <canvas id="reportChart" height="120"></canvas>
+    <canvas id="reportPie" height="120" style="margin-top: 30px;"></canvas>
+
+    <form method="POST" action="/export_report">
+    <input type="hidden" name="view_type" value="{{ view_type }}">
+    <button type="submit" name="export_type" value="pdf">Export as PDF</button>
+    <button type="submit" name="export_type" value="excel">Export as Excel</button>
+</form>
+
+
+    <a href="/" class="button">← Back to Home</a>
+</div>
+
+<script>
+    const cash = {{ cash_total | default(0) | tojson }};
+    const upi = {{ upi_total | default(0) | tojson }};
+    const expenses = {{ expense_total | default(0) | tojson }};
+    const totalSales = cash + upi;
+
+    // Bar chart
+    new Chart(document.getElementById('reportChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: ['Cash', 'UPI'],
+            datasets: [{
+                label: 'Sales (₹)',
+                data: [cash, upi],
+                backgroundColor: ['#4caf50', '#2196f3']
+            }]
+        },
+        options: {
+            plugins: {
+                title: { display: true, text: '{{ view_type|capitalize }} Sales Breakdown' },
+                legend: { display: false }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    // Pie chart
+    new Chart(document.getElementById('reportPie').getContext('2d'), {
+        type: 'pie',
+        data: {
+            labels: ['Sales (Cash + UPI)', 'Expenses'],
+            datasets: [{
+                data: [totalSales, expenses],
+                backgroundColor: ['#ffc107', '#f44336']
+            }]
+        },
+        options: {
+            plugins: {
+                title: { display: true, text: '{{ view_type|capitalize }} Sales vs Expenses' }
+            }
+        }
+    });
+</script>
+<footer class="footer">
+    <p><strong>Chandni Collection</strong></p>
+    <p>📍 Fazalpura road, Ujjain(M.P.)</p>
+    <p>📞 +91 9827453272</p>
+    <p>📞 +91 7879065558</p>
+    <p>📧 chandnicollection@example.com</p>
+</footer>
+
+</body>
+</html>

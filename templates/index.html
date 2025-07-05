@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shop Tracker - Daily Sales & Expenses</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="header centered-header">
+    <a href="/">
+    <img src="/static/logo.png" alt="Chandni Collection Logo">
+</a>
+
+    <h1>Chandni Collection</h1>
+</div>
+
+    <div class="container">
+        <h1>Shop Tracker</h1>
+
+        <!-- Sale Entry -->
+        <section>
+            <h2>Add Sale</h2>
+            <form action="/add-sale" method="POST">
+                <input type="text" name="item" placeholder="Item name" required>
+                <input type="number" step="0.01" name="amount" placeholder="Amount (₹)" required>
+                <select name="mode" required>
+                    <option value="">Select Payment Mode</option>
+                    <option value="Cash">Cash</option>
+                    <option value="UPI">UPI</option>
+                </select>
+                <button type="submit">Add Sale</button>
+            </form>
+        </section>
+
+        <!-- Expense Entry -->
+        <section>
+            <h2>Add Expense</h2>
+            <form action="/add-expense" method="POST">
+                <input type="number" step="0.01" name="expense_amount" placeholder="Amount (₹)" required>
+                <input type="text" name="reason" placeholder="Reason" required>
+                <button type="submit">Add Expense</button>
+            </form>
+        </section>
+
+        <!-- Summary (optional) -->
+        <section style="margin-top: 2em;">
+            <h2>Summary</h2>
+            <a href="/summary" class="button">View Daily Summary</a>
+            <a href="/report" class="button">View Weekly/Monthly Report</a>
+
+        </section>
+    </div>
+    <footer class="footer">
+    <p><strong>Chandni Collection</strong></p>
+    <p>📍 Fazalpura road, Ujjain(M.P.)</p>
+    <p>📞 +91 9827453272</p>
+    <p>📞 +91 7879065558</p>
+    <p>📧 chandnicollection@example.com</p>
+</footer>
+
+</body>
+</html>

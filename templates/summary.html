@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Daily Summary</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="header centered-header">
+    <a href="/">
+    <img src="/static/logo.png" alt="Chandni Collection Logo">
+</a>
+
+    <h1>Chandni Collection</h1>
+</div>
+
+    <div class="container">
+        <h1>Summary Report</h1>
+
+        <form method="POST" action="/summary">
+            <label for="selected_date">Select Date:</label>
+            <input type="date" name="selected_date" id="selected_date" value="{{ selected_date }}" required>
+            <button type="submit">View Summary</button>
+        </form>
+
+        <div class="summary-box">
+            <h3>Summary for {{ selected_date }}</h3>
+            <p><strong>Cash Sales:</strong> ₹{{ cash_total }}</p>
+            <p><strong>UPI Sales:</strong> ₹{{ upi_total }}</p>
+            <p><strong>Total Expenses:</strong> ₹{{ expense_total }}</p>
+            <hr>
+            <p><strong>Remaining Amount:</strong> ₹{{ remaining }}</p>
+        </div>
+        <canvas id="salesChart" height="120"></canvas>
+    <canvas id="overallChart" height="120" style="margin-top: 30px;"></canvas>
+
+        <a href="/" class="button">← Back to Home</a>
+    </div>
+    
+<script>
+    // Data from Flask template
+    const cash = {{ cash_total | default(0) | tojson }};
+    const upi = {{ upi_total | default(0) | tojson }};
+    const expenses = {{ expense_total | default(0) | tojson }};
+    const totalSales = cash + upi;
+
+
+    // Sales Breakdown (Cash vs UPI)
+    const ctx1 = document.getElementById('salesChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: ['Cash', 'UPI'],
+            datasets: [{
+                label: 'Sales (₹)',
+                data: [cash, upi],
+                backgroundColor: ['#4caf50', '#2196f3']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: { display: true, text: 'Sales Breakdown (Cash vs UPI)' },
+                legend: { display: false }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    // Overall Pie: Sales vs Expenses
+    const ctx2 = document.getElementById('overallChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'pie',
+        data: {
+            labels: ['Cash + UPI Sales', 'Expenses'],
+            datasets: [{
+                label: '₹',
+                data: [totalSales, expenses],
+                backgroundColor: ['#ffc107', '#f44336']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: { display: true, text: 'Sales vs Expenses (₹)' }
+            }
+        }
+    });
+</script>
+<footer class="footer">
+    <p><strong>Chandni Collection</strong></p>
+    <p>📍 Fazalpura road, Ujjain(M.P.)</p>
+    <p>📞 +91 9827453272</p>
+    <p>📞 +91 7879065558</p>
+    <p>📧 chandnicollection@example.com</p>
+</footer>
+
+</body>
+</html>
